@@ -1,0 +1,32 @@
+##Data Management
+#import data 
+library(haven)
+file_name <- read_dta("~/file_link.dta")
+View(file_name)
+#new var "country_name" with string, countries were originally coded with UK=1 
+table(file_name$country)
+file_name$country_name = ifelse(file_name$country!=0, "UK")
+table(file_name$country_name)
+
+#immigration status
+table(file_name$ethnic)
+#new var immigration status (immOrNat) with 4 categories
+table(file_name$ethnic)
+file_name$immOrNat=ifelse(file_name$ethnic < 5,"1st Gen Imm", ifelse(file_name$ethnic >13, "Native", 
+                                                                                               ifelse(file_name$ethnic >8, "3rd Gen Imm", "2nd Gen Imm" ) ))
+table(file_name$immOrNat)
+
+#forming 1 dataset from all subsets
+Fullset <- rbind(subset1, subset2, subset3, subset4)
+table(Fullset$country_name)
+table(Fullset$immOrNat)
+
+#exporting combined dataset to Desktop for other softwares SPSS/STATA
+setwd("~/Desktop/folder_name/")
+library(haven) 
+#for SPSS
+write_sav(Fullset, "Fullset.sav") 
+#for Stata
+write_dta(Fullset, "Fullset.dta")
+
+ 
