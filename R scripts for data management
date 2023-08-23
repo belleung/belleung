@@ -3,6 +3,7 @@
 library(haven)
 file_name <- read_dta("~/file_link.dta")
 View(file_name)
+
 #new var "country_name" with string, countries were originally coded with UK=1 
 table(file_name$country)
 file_name$country_name = ifelse(file_name$country!=0, "UK")
