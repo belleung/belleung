@@ -1,0 +1,79 @@
+##This is a sample model for exploratory factor analysis
+
+library(psych)
+library(GPArotation)
+
+
+##subset for testing EFA in 4 countries
+#define EFA model
+EFA <- c("factor1", "factor2", "factor3",
+            "factor4", "factor5", "factor6",
+            "factor7", "factor8", "factor9", 
+            "factor10", "factor11", "factor12", "factor13")
+
+#subset including only variables needed
+Data_EFA <- Original_data[EFA]
+describe(Data_EFA)  
+
+ 
+##sampling adequacy KMO test
+KMO(Data_EFA)
+
+##correlation adequacy Bartlett's test
+cortest.bartlett(Data_EFA)
+
+
+##checking for how many factors present
+factors = fa.parallel(Data_EFA, fm="ml", fa="pc", ylabel ="Eigenvalues")
+sum(factors$fa.values > 1.0) ##old kaiser criterion
+sum(factors$fa.values > .7) ##new kaiser criterion
+
+#Scree plot
+scree(Data_EFA, pc=TRUE, factors = TRUE, hline="-1", main="Title for this plot")
+
+#PCA plot
+install.packages("FactoMineR")
+library(FactoMineR)
+pca=PCA(Data_EFA)
+
+##correlation matrix with a 2 factor model
+round1 = fa(Data_EFA, nfactors=2, rotate = "none", fm = "ml")
+round1
+
+##correlation matrix with a 2 factor model, with promax rotation
+round2 = fa(Data_EFA, nfactors=2, rotate = "promax", fm = "ml")
+round2
+
+##correlation matrix with a 2 factor model, removing bad indicators  
+round3 = fa(Data_EFA[ , -c(2,6,10,11,12)], nfactors=2, rotate = "promax", fm = "ml")
+round3
+
+##get cfi
+finalmodel = fa(Data_EFA[ , -c(2,6,10,11,12)], nfactors=2, rotate = "promax", fm = "ml")
+1 - ((finalmodel$STATISTIC-finalmodel$dof)/
+       (finalmodel$null.chisq-finalmodel$null.dof))
+finalmodel
+
+##reliability
+describe(Data_EFA)
+#alpha 1 for factor1, factor3, factor4, factor5
+al1 = data.frame(factor1, factor3, factor4, factor5)
+alpha(al1)
+
+#alpha 2 for factor7, factor8, factor9, factor13
+al2 = data.frame(factor7, factor8, factor9, factor13)
+alpha(al2)
+
+##create new factor scores
+EFA$f1 = apply(Data_EFA[ , factor1], 1, mean) ##creates average scores
+EFA$f2 = apply(Data_EFA[ , factor2], 1, mean) ##creates average scores
+
+
+summary(UK_MHf)
+sd(Data_EFA$f1)
+sd(Data_EFA$f2)
+
+##Path diagram
+fa.diagram(finalmodel, sort= TRUE, cut = 0, digits = 3, main = "Latent structure of the subject ",
+           cex= 1.25)
+plot(finalmodel)
