@@ -1,0 +1,12 @@
+## Confirmatory factor analysis
+
+#creating the model
+modelCFA1 <- '
+ factor1 =~ y1 + y2 + y3 + y4 ;
+ factor2 =~ y5 + y6 + y7 + y8
+factor1 ~~ factor2'
+
+#get model fit indicies
+fit.modelCFA1 <- cfa(modelCFA1, data = data_set, std.lv=TRUE)
+summary(fit.modelCFA1, fit.measures = TRUE)
+fitmeasures(fit.modelCFA1, c('cfi', 'tli', 'rmsea', 'srmr', 'chisq', 'df'))
